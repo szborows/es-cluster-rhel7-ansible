@@ -1,0 +1,14 @@
+- hosts: all
+  remote_user: root
+
+  roles:
+    - role: common
+    - role: docker
+    - role: prometheus_client
+    - role: elasticsearch
+
+- hosts: master
+  remote_user: root
+
+  roles:
+    - prometheus_server

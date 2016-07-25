@@ -1,0 +1,6 @@
+proxy_env:
+  proxy_host: your-proxy-host
+  proxy_port: your-proxy-port
+  http_proxy: http://{{ proxy_host  }}:{{ proxy_port }}
+  https_proxy: http://{{ proxy_host  }}:{{ proxy_port }}
+  rhel_extra_repo_base_url: your-rhel-extras-repo-base-url

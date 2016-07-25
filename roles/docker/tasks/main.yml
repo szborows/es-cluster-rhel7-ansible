@@ -1,0 +1,19 @@
+- name: Install docker daemon
+  yum: name=docker state=latest
+
+- name: Configure Docker daemon proxy
+  file: path=/etc/systemd/system/docker.service.d state=directory
+
+- name: Copy proxy configuration
+  template: src=docker-http-proxy.conf dest=/etc/systemd/system/docker.service.d/http-proxy.conf owner=root group=root mode=0644
+
+- name: Start docker daemon
+  service: name=docker enabled=yes state=restarted
+
+- name: Stop all running containers
+  shell: docker stop $(docker ps -a -q)
+  ignore_errors: yes
+
+- name: Remove all containers
+  shell: docker rm $(docker ps -a -q)
+  ignore_errors: yes

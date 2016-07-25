@@ -1,0 +1,14 @@
+- name: Install supervisord
+  yum: name=supervisor state=latest
+
+- name: Copy supervisor config
+  copy: src=supervisord.conf dest=/etc
+
+- name: Download and unpack prometheus
+  unarchive: src=https://github.com/prometheus/prometheus/releases/download/0.20.0/prometheus-0.20.0.linux-amd64.tar.gz dest=/tmp copy=no
+
+- name: Configure prometheus
+  template: src=prometheus.yml.j2 dest=/tmp/prometheus-0.20.0.linux-amd64/prometheus.yml
+
+- name: Run prometheus
+  service: name=supervisord enabled=yes state=restarted

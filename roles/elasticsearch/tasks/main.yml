@@ -1,0 +1,29 @@
+- name: Create dir for ES config files
+  file: path=/tmp/es_conf state=directory mode=0755
+
+- name: Copy ES master config
+  template: src=elasticsearch.master.yml.j2 dest=/tmp/es_conf/elasticsearch.yml
+  when: "'master' in group_names"
+
+- name: Copy ES slave config
+  template: src=elasticsearch.slave.yml.j2 dest=/tmp/es_conf/elasticsearch.yml
+  when: "'es' in group_names"
+
+- name: Copy ES logging config
+  copy: src=logging.yml dest=/tmp/es_conf/logging.yml
+
+- name: Scripts directory for ES
+  file: path=/tmp/es_conf/scripts state=directory mode=0755
+
+- name: Remove es container, if needed
+  shell: docker rm es
+  ignore_errors: yes
+
+- name: Copy Dockerfile
+  copy: src=Dockerfile dest=.
+
+- name: Docker build image
+  shell: docker build --build-arg proxy_host={{ proxy_host }} --build-arg proxy_port={{ proxy_port }} -t gates/es .
+
+- name: Start elasticsearch
+  shell: docker run -d -p 9200:9200 -p 9300:9300 --name es -v /tmp/es_conf:/usr/share/elasticsearch/config:ro gates/es

@@ -1,0 +1,20 @@
+#!/bin/bash
+
+if ! [ $# -eq 2 ]; then
+    echo "usage: $0 <euca-file> <auto-scaling-group-name>"
+    exit 1
+fi
+
+EUCA_FILE=$1
+. $EUCA_FILE
+
+AUTOSCALING_GROUP_NAME=$2
+
+INSTANCES=`euscale-describe-auto-scaling-groups ASGROUP $AUTOSCALING_GROUP_NAME | tail -n +2 | awk '{ print $2;  }'`
+
+unoconv_node_ix=1
+for instance in $INSTANCES; do
+    public_ip=`euca-describe-instances $instance | tail -n +2 | head -n 1 | awk '{print $13;}'`
+    private_ip=`euca-describe-instances $instance | tail -n +2 | head -n 1 | awk '{print $14;}'`
+    echo "$private_ip $public_ip"
+done
