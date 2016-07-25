@@ -10,6 +10,8 @@ def get_autoscaling_ips(euca_path, autoscaling_group_name):
     if len(b) != 0:
         print('# wtf? {}'.format(b))
     ips = ips.decode('utf-8').split('\n')
+    if ips[0].split()[0] == 'eucarc':
+        ips = ips[1:]
     return [{'private': x.split()[0], 'public': x.split()[1]} for x in ips if x]
 
 
@@ -17,7 +19,7 @@ def main(euca_path, autoscaling_group_name, groups):
     ips = get_autoscaling_ips(euca_path, autoscaling_group_name)
     num_requested_nodes = sum([int(e[1]) for e in groups])
     if len(ips) != num_requested_nodes:
-        raise RuntimeError('it doesn\'t add up. autoscaling group size: {0}, requested nodes: {1}'.format(len(ips), num_requested_nodes))
+        raise RuntimeError('it doesn\'t add up. autoscaling group size: {0}, requested nodes: {1}\n{2}'.format(len(ips), num_requested_nodes, ips))
     inventory_file = ''
 
     ip_ix = 0

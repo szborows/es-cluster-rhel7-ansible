@@ -5,7 +5,7 @@
   lineinfile: dest=/etc/yum.conf backup=yes regexp=^gpgcheck= line=gpgcheck=0
 
 - name: Add Extras repository
-  template: src=rhel-7-server-extras-x86_64.repo.j2 dest=/etc/yum.repos.d owner=root group=root mode=0644
+  template: src=rhel-7-server-extras-x86_64.repo.j2 dest=/etc/yum.repos.d/rhel-7-server-extras-x86_64.repo owner=root group=root mode=0644
 
 - name: Yum update
   yum: name=* state=latest
